@@ -120,6 +120,102 @@
             color: var(--bg-black); background-color: var(--accent-color);
             border-color: var(--accent-color); box-shadow: 0 0 15px var(--accent-glow);
         }
+        /* ==========================================
+           REGUŁY DLA URZĄDZEŃ MOBILNYCH (TELEFONY)
+           ========================================== */
+        @media (max-width: 600px) {
+            /* 1. Poprawka nawigacji - układ pionowy lub ściśnięty, żeby przyciski nie nachodziły na logo */
+            nav {
+                padding: 15px 4%;
+                flex-direction: column;
+                gap: 12px;
+                position: relative; /* Zmiana na relative zapobiega zasłanianiu treści przez fixed menu na małym ekranie */
+            }
+            
+            nav div[style*="display: flex"] {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 10px !important;
+            }
+
+            /* Ukrywamy napis "Better to know" na telefonach, żeby zyskać cenne miejsce */
+            nav div[style*="border-left"] {
+                display: none !important;
+            }
+
+            .nav-btn {
+                padding: 6px 12px;
+                font-size: 0.65rem;
+            }
+
+            /* 2. Dopasowanie Hero (głównego baneru) */
+            .hero {
+                height: auto;
+                padding: 40px 20px;
+            }
+
+            /* 3. Marginesy siatki kategorii na telefonie */
+            .categories-grid {
+                margin-top: 20px;
+                padding: 0 5%;
+                gap: 15px;
+            }
+
+            .cat-card {
+                padding: 35px 20px;
+            }
+
+            /* 4. Podstrony z ćwiczeniami - mniejsze odstępy */
+            .exercise-page {
+                padding: 30px 5% 30px;
+            }
+
+            .section-header {
+                margin-bottom: 30px;
+                border-left-width: 5px;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .part-divider {
+                font-family: 'Anton', sans-serif;
+                font-size: 1.2rem;
+                margin: 40px 0 20px;
+            }
+
+            /* 5. Informacje o ćwiczeniu - mniejszy padding wewnątrz karty */
+            .exercise-info {
+                padding: 20px;
+            }
+
+            .exercise-info h3 {
+                font-size: 1.5rem;
+            }
+
+            /* Stopka */
+            footer {
+                padding: 40px 20px;
+                margin-top: 50px;
+            }
+        }
+
+        /* ==========================================
+           REGUŁY DLA TABLETÓW / MAŁYCH LAPTOPÓW
+           ========================================== */
+        @media (max-width: 1024px) and (min-width: 601px) {
+            nav {
+                padding: 15px 5%;
+            }
+            .categories-grid {
+                padding: 0 5%;
+            }
+            .exercise-page {
+                padding: 80px 5% 40px;
+            }
+        }
     </style>
 </head>
 <body>
