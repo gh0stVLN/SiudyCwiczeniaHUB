@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ćwiczenia dla Ciebie | SIUDY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-color: #ccff00;
+            --accent-glow: rgba(204, 255, 0, 0.3);
+            --bg-black: #080808;
+            --card-bg: #111111;
+            --text-white: #ffffff;
+            --text-grey: #a0a0a0;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-black);
+            color: var(--text-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 5%; background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(15px); position: fixed; top: 0;
+            width: 100%; z-index: 1000; border-bottom: 1px solid #1a1a1a;
+        }
+
+        .logo {
+            font-family: 'Anton', sans-serif; font-size: 2rem;
+            color: var(--accent-color); text-transform: uppercase;
+            font-style: italic; letter-spacing: 1px; cursor: pointer;
+        }
+
+        .hero {
+            height: 50vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            background: radial-gradient(circle at center, rgba(204, 255, 0, 0.05) 0%, transparent 70%), #000;
+            position: relative; border-bottom: 1px solid #1a1a1a;
+            padding-top: 80px;
+        }
+
+        .hero h1 {
+            font-family: 'Anton', sans-serif; font-size: clamp(2.5rem, 8vw, 5rem);
+            text-transform: uppercase; font-style: italic; line-height: 0.9;
+        }
+
+        .hero p { color: var(--accent-color); font-weight: 900; letter-spacing: 4px; font-size: 0.9rem; }
+
+        .categories-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px; padding: 0 10%; margin-top: -50px; position: relative; z-index: 10;
+        }
+
+        .cat-card {
+            background: var(--card-bg); padding: 50px 30px; text-align: center;
+            border: 1px solid #222; cursor: pointer; transition: var(--transition);
+        }
+
+        .cat-card:hover { border-color: var(--accent-color); transform: translateY(-10px); box-shadow: 0 15px 40px var(--accent-glow); }
+
+        .cat-card h2 { font-family: 'Anton', sans-serif; font-size: 1.8rem; text-transform: uppercase; }
+
+        .exercise-page { display: none; padding: 100px 10% 50px; animation: fadeIn 0.6s ease-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-header { margin-bottom: 50px; border-left: 8px solid var(--accent-color); padding-left: 20px; }
+
+        .section-header h2 { font-family: 'Anton', sans-serif; font-size: 3rem; color: var(--accent-color); text-transform: uppercase; font-style: italic; }
+
+        .part-divider {
+            font-family: 'Anton', sans-serif; font-size: 1.5rem; color: var(--text-grey);
+            text-transform: uppercase; margin: 60px 0 30px; border-bottom: 1px solid #222; padding-bottom: 10px;
+        }
+
+        .exercise-item {
+            background: #111; border: 1px solid #222; border-radius: 12px;
+            margin-bottom: 40px; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr;
+            align-items: start;
+        }
+
+        @media (max-width: 1000px) { .exercise-item { grid-template-columns: 1fr; } }
+
+        .video-container { background: #1a1a1a; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; }
+        .video-container iframe { width: 100%; height: 100%; border: none; }
+
+        .exercise-info { padding: 40px; }
+        .exercise-info h3 { font-family: 'Anton', sans-serif; font-size: 1.8rem; margin-bottom: 15px; color: var(--accent-color); text-transform: uppercase; }
+        .exercise-info p { color: #ccc; margin-bottom: 20px; }
+
+        .technique-section { margin-top: 20px; }
+        .technique-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 700; }
+        .technique-title.correct { color: var(--accent-color); }
+        .technique-title.wrong { color: #ff3333; }
+        
+        .technique-list { list-style: none; margin-bottom: 20px; }
+        .technique-list li { position: relative; padding-left: 22px; margin-bottom: 8px; font-size: 0.9rem; color: #b0b0b0; line-height: 1.4; }
+        .technique-list.correct li::before { content: '✓'; position: absolute; left: 0; color: var(--accent-color); font-weight: bold; }
+        .technique-list.wrong li::before { content: '✕'; position: absolute; left: 0; color: #ff3333; font-weight: bold; }
+
+        .back-btn { display: inline-block; margin-bottom: 30px; color: var(--text-grey); text-decoration: none; text-transform: uppercase; font-weight: 700; font-size: 0.8rem; letter-spacing: 2px; cursor: pointer; transition: 0.3s; }
+        .back-btn:hover { color: var(--accent-color); }
+
+        footer { padding: 60px; text-align: center; border-top: 1px solid #1a1a1a; margin-top: 100px; color: var(--text-grey); font-size: 0.8rem; letter-spacing: 2px; }
+
+        .nav-btn {
+            display: inline-block; padding: 8px 18px; border: 1px solid #333; border-radius: 4px;
+            color: var(--text-grey); text-decoration: none; font-size: 0.7rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px; transition: var(--transition);
+        }
+        .nav-btn:hover {
+            color: var(--bg-black); background-color: var(--accent-color);
+            border-color: var(--accent-color); box-shadow: 0 0 15px var(--accent-glow);
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo" onclick="showHome()">SIUDY</div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="https://gh0stvln.github.io/SebastianSiudyTrenerPersonalny/" class="nav-btn">Główna strona</a>
+            <a href="https://gh0stvln.github.io/TrenerPersonalnySiudySebastian/" class="nav-btn">Hub Wiedzy</a>
+            <div style="font-weight: 700; font-size: 0.7rem; color: var(--text-grey); text-transform: uppercase; letter-spacing: 2px; border-left: 1px solid #333; padding-left: 15px;">Better to know</div>
+        </div>
+    </nav>
+
+    <div id="home-content">
+        <section class="hero">
+            <h1>ĆWICZENIA DLA CIEBIE</h1>
+            <p>WYBIERZ KATEGORIĘ TRENINGOWĄ</p>
+        </section>
+
+        <div class="categories-grid">
+            <div class="cat-card" onclick="openPage('funkcjonalne')">
+                <h2>Ćwiczenia Funkcjonalne</h2>
+            </div>
+            <div class="cat-card" onclick="openPage('gorna')">
+                <h2>Ćwiczenia Górnej kończyny</h2>
+            </div>
+            <div class="cat-card" onclick="openPage('dolna')">
+                <h2>Ćwiczenia Dolnej kończyny</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEKCJA FUNKCJONALNE -->
+    <section id="funkcjonalne" class="exercise-page">
+        <div class="back-btn" onclick="showHome()">← Powrót do menu</div>
+        <div class="section-header"><h2>Ćwiczenia Funkcjonalne</h2></div>
+
+        <div class="part-divider">Stabilizacja i Core</div>
+        
+        <div class="exercise-item">
+            <div class="video-container"> <img src="plank.gif" alt="plank">  </div>
+            <div class="exercise-info">
+                <h3>Plank</h3>
+                <p>Klasyczna podpór przodem na przedramionach budujący stabilność izometryczną core.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Utrzymuj linię prostą: głowa, barki, biodra i pięty w jednej płaszczyźnie.</li>
+                        <li>Mocno podwiń miednicę pod siebie, mocno spinając pośladki oraz mięśnie brzucha.</li>
+                        <li>Odpychaj się aktywnie od łokci w górę, zapobiegając doklejaniu się łopatek do kręgosłupa.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Zapadanie się odcinka lędźwiowego w dół, czyli tzw. "wiszenie na kręgosłupie".</li>
+                        <li>Zadzieranie głowy wysoko do góry oraz unoszenie bioder ponad linię barków.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Side-Plank-Hip-Adduction-Copenhagen-adduction.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Side Plank Hip Lift</h3>
+                <p>Dynamiczna wersja planku bokiem skupiona na mięśniach skośnych brzucha oraz odwodzicielach biodra.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Ustaw łokieć bezpośrednio pod barkiem, a stopy ułóż jedna na drugiej lub jedna przed drugą.</li>
+                        <li>Obniżaj biodro kontrolowanym ruchem blisko ziemi, a następnie dynamicznie wypchnij je wysoko w górę.</li>
+                        <li>Utrzymuj klatkę piersiową otwartą, a całe ciało zablokowane w jednej, bocznej płaszczyźnie.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Rotowanie klatki piersiowej i tułowia w stronę ziemi podczas ruchu biodra.</li>
+                        <li>Wysuwanie pośladków daleko w tył i zginanie się w biodrach zamiast trzymania linii prostej.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Cable-Half-Kneeling-Pallof-Press.gif" alt="pallof press"></div>
+            <div class="exercise-info">
+                <h3>Pallof Press</h3>
+                <p>Ćwiczenie antyrotacyjne. Doskonale uczy kontrolowania rotacji tułowia i stabilizacji kręgosłupa.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Stań stabilnie bokiem do wyciągu, stopy ustaw mocno na szerokość barków, kolana lekko ugięte.</li>
+                        <li>Wyciskaj linkę lub gumę centralnie przed środek klatki piersiowej, całkowicie blokując ruch tułowia.</li>
+                        <li>Zatrzymaj ruch na 1-2 sekundy w pełnym wyproście ramion, maksymalnie napinając cały core.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Pozwalanie, aby guma lub linka rotowała biodra bądź ramiona z powrotem w stronę wyciągu.</li>
+                        <li>Zbyt szybkie, szarpane tempo ćwiczenia oraz brak pełnej kontroli i stabilności w staniu.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Dead-Bug.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Dead Bug</h3>
+                <p>Bezpieczne dla lędźwi ćwiczenie uczące niezależnej pracy kończyn przy zachowaniu stabilnego korpusu.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Dociśnij odcinek lędźwiowy maksymalnie mocno do maty i utrzymaj ten docisk przez cały czas.</li>
+                        <li>Opuszczaj przeciwległą rękę i nogę tuż nad ziemię powoli, synchronicznie i na pełnym wydechu.</li>
+                        <li>Wracaj do pozycji startowej za pomocą siły brzucha, dbając o zablokowanie drugiej pary kończyn.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Orywanie się dolnych pleców od podłoża w momencie, gdy noga schodzi nisko nad podłogę.</li>
+                        <li>Zbyt szybkie opuszczanie kończyn bez świadomej kontroli mięśniowej oraz gubienie napięcia.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="HollowHold.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Hollow Body</h3>
+                <p>Gimnastyczna pozycja budująca potężną siłę i wytrzymałość całego gorsetu mięśniowego.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Odcinek lędźwiowy bezwzględnie musi idealnie przylegać do podłogi na całej swojej szerokości.</li>
+                        <li>Oderwij łopatki oraz proste nogi lekko od ziemi, tworząc z ciała kształt napiętej kołyski.</li>
+                        <li>Ramiona wyciągnij prosto za głowę, zepnij pośladki i skieruj żebra mocno w dół do miednicy.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Tworzenie wolnej przestrzeni (tunelu) między dolnymi plecami a matą podczas trzymania pozycji.</li>
+                        <li>Odkładanie głowy na ziemię lub nadmierne, bolesne spinanie mięśni szyi zamiast pracy brzucha.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Quarter-Sit-up.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Sit up</h3>
+                <p>Klasyczne brzuszki angażujące prosty mięsień brzucha oraz zginacze bioder w pełnym zakresie ruchu.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Zacznij od leżenia na plecach, stopy oparte płasko na ziemi, kolana ugięte stabilnie.</li>
+                        <li>Unieś tułów płynnym ruchem rolując kręgosłup, aż dotkniesz klatką piersiową blisko swoich ud.</li>
+                        <li>Opuszczaj ciało powoli, kontrolując fazę ekscentryczną i odkładając plecy kręg po kręgu.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Gwałtowne szarpanie głowy rękami zaplecionymi na karku, co obciąża odcinek szyjny.</li>
+                        <li>Orywanie stóp od podłoża oraz bezwładne rzucanie pleców na matę przy powrocie do leżenia.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Russian-Twist.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Russian Twist</h3>
+                <p>Rotacja tułowia w siadzie równoważnym wzmacniająca mięśnie skośne brzucha.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Usiądź na macie, odchyl prosty tułów lekko w tył i unieś stopy nad ziemię dla pełnej równowagi.</li>
+                        <li>Skręcaj całe ramiona wraz z linią barków i klatką piersiową od jednego boku do drugiego.</li>
+                        <li>Utrzymuj stabilne biodra i kolana – powinny pozostać nieruchome i nie kołysać się na boki.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Garbienie pleców i zaokrąglanie odcinka piersiowego lub lędźwiowego podczas skrętów.</li>
+                        <li>Przenoszenie samych dłoni z boku na bok bez faktycznej, głębokiej rotacji klatki piersiowej.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Bird-Dog.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Bird Dog</h3>
+                <p>Ćwiczenie budujące stabilność krzyżową pleców i pośladków przy minimalnym obciążeniu kręgosłupa.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>W klęku podpartym unoś jednocześnie przeciwległą rękę i nogę dokładnie do linii prostoliniowej ciała.</li>
+                        <li>Mocno wypychaj piętę unoszonej nogi w tył (napinając poślad) oraz kciuk wyciągniętej dłoni w górę.</li>
+                        <li>Trzymaj biodra idealnie równolegle do ziemi, całkowicie zapobiegając rotowaniu miednicy na boki.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Nadmierne wyginanie dolnych pleców w łuk (hiperlordoza) przy zbyt wysokim unoszeniu nogi.</li>
+                        <li>Zadzieranie głowy i patrzenie w przód, co niepotrzebnie obciąża odcinek szyjny.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="part-divider">Mobilność i Aktywacja</div>
+        
+        <div class="exercise-item">
+            <div class="video-container"> <img src="Dumbbell-Glute-Bridge.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Glute Bridge</h3>
+                <p>Mostek biodrowy aktywujący mięśnie pośladkowe wielkie oraz grupę kulszowo-goleniową.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Leżąc na plecach, ugnij kolana, stopy ustaw mocno na ziemi na szerokość bioder, blisko pośladków.</li>
+                        <li>Wpychaj pięty mocno w podłogę i unoś biodra, aż uzyskasz prostą linię od ud do tułowia.</li>
+                        <li>Na samej górze mocno dociśnij pośladki, blokując ruch miednicy, i utrzymaj pozycję na sekundę.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Wypychanie bioder za wysoko kosztem bolesnego wygięcia dolnego odcinka pleców.</li>
+                        <li>Unoszenie palców stóp lub całych stóp nad ziemię zamiast stabilnego nacisku z całych pięt.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Bodyweight-Military-Press.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Aniołki o ścianę</h3>
+                <p>Świetne ćwiczenie otwierające klatkę piersiową i poprawiające mobilność obręczy barkowej.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Stań oparty plecami o ścianę (potylica, łopatki oraz pośladki muszą ściśle stykać się ze ścianą).</li>
+                        <li>Dociśnij lędźwie do ściany i utrzymuj łokcie oraz zewnętrzne strony dłoni przyklejone do niej.</li>
+                        <li>Przesuwaj ramiona powoli w górę i w dół w pełnym zakresie, zachowując stały kontakt ze ścianą.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Orywanie dolnych pleców od ściany w celu ułatwienia sobie uniesienia rąk wyżej.</li>
+                        <li>Odrywanie nadgarstków, dłoni lub łokci od powierzchni ściany podczas ruchu w górę.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="90-90-Hip-Stretch.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>90/90's</h3>
+                <p>Kluczowe ćwiczenie poprawiające rotację wewnętrzną i zewnętrzną w stawie biodrowym.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Usiądź na ziemi i ustaw obie nogi ugięte pod kątem 90 stopni (jedna z przodu, druga z boku ciała).</li>
+                        <li>Utrzymuj maksymalnie wyprostowaną sylwetkę i powoli przenoś kolana na drugą stronę bez odrywania pięt.</li>
+                        <li>Dociążaj biodra w końcowej pozycji, dążąc do odłożenia obu kolan płasko na ziemię.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Mocne zaokrąglanie pleców i zapadanie się klatki piersiowej podczas rotacji nóg.</li>
+                        <li>Odrywanie i ślizganie się stóp po podłodze – pięty muszą stanowić nieruchomy punkt obrotu.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Dumbbell-Goblet-Squat.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Deep Squat Hold</h3>
+                <p>Przebywanie w pozycji głębokiego przysiadu. Poprawia mobilność bioder, kolan i stawów skokowych.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Zejdź do pełnego przysiadu tak głęboko, jak to możliwe, zachowując całe stopy na ziemi.</li>
+                        <li>Utrzymuj klatkę piersiową dumnie wyprostowaną, a kolana rozpychaj delikatnie na boki za pomocą łokci.</li>
+                        <li>Staraj się maksymalnie wydłużać kręgosłup, oddalając barki od uszu.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Orywanie pięt od podłoża, przez co cała waga ciała nienaturalnie przenosi się na palce stóp.</li>
+                        <li>Całkowite zwiotczenie sylwetki i mocne, pasywne zgarbienie pleców w dolnej pozycji.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="WorldsGreatestStretch.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>World Greatest Stretch</h3>
+                <p>Kompleksowe ćwiczenie mobilizujące biodra, taśmę tylną oraz kręgosłup piersiowy.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Zrób głęboki wykrok w przód, obie dłonie oprzyj płasko na ziemi po wewnętrznej stronie przedniej stopy.</li>
+                        <li>Oderwij rękę bliższą stopy i wykonaj mocny skręt klatki piersiowej ku górze, wodząc wzrokiem za dłonią.</li>
+                        <li>Noga znajdująca się z tyłu musi być idealnie prosta i mocno napięta w kolanie przez cały czas.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Uginanie kolana tylnej nogi lub bezwładne opuszczanie bioder bez kontroli napięcia.</li>
+                        <li>Wykonanie rotacji samym ramieniem zamiast pełnego skrętu całej struktury klatki piersiowej.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Cross-Body-Mountain-Climber.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Mountain Climber</h3>
+                <p>Dynamiczne ćwiczenie poprawiające stabilność core, siłę barków oraz kondycję metaboliczną.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Przyjmij pozycję wysokiego planku (jak do pompki), dłonie ustawiając idealnie pod barkami.</li>
+                        <li>Dynamicznie i płynnie przyciągaj kolana na zmianę wprost w kierunku klatki piersiowej.</li>
+                        <li>Utrzymuj biodra nisko, w stałej, niezmiennej linii z resztą Twojego ciała.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Unoszenie pośladków wysoko w górę oraz nadmierne podskakiwanie na stopach w trakcie ruchu.</li>
+                        <li>Zbytnie cofanie linii barków za linię dłoni, co przenosi ciężar na nadgarstki.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Fire-Hydrant.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Fire Hydrants</h3>
+                <p>Odwodzenie nogi w klęku podpartym. Świetnie aktywuje i wzmacnia mięsień pośladkowy średni.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>W pozycji klęku podpartego unoś ugiętą nogę w bok (utrzymując kąt 90 stopni w kolanie).</li>
+                        <li>Ruch powinien odbywać się wyłącznie w stawie biodrowym pracującej nogi.</li>
+                        <li>Brzuch trzymaj mocno spięty, a kręgosłup musi pozostać w neutralnym położeniu.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Skręcanie i rotowanie całego tułowia na bok w celu sztucznego wywołania wyższego uniesienia nogi.</li>
+                        <li>Uginanie rąk w łokciach i przenoszenie ciężaru ciała na przeciwną stronę miednicy.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEKCJA GÓRNA KOŃCZYNA -->
+    <section id="gorna" class="exercise-page">
+        <div class="back-btn" onclick="showHome()">← Powrót do menu</div>
+        <div class="section-header"><h2>Górna kończyna</h2></div>
+
+        <div class="part-divider">Plecy (Pionowe i Poziome)</div>
+        
+        <div class="exercise-item">
+            <div class="video-container"><img src="Pull-up.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Podciąganie</h3>
+                <p>Królewskie ćwiczenie wielostawowe na szerokość pleców (najszerszy grzbietu) i ramiona.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Inicjuj ruch od aktywnego opuszczenia łopatek w dół (depresja), a nie od samego zgięcia w łokciach.</li>
+                        <li>Ciągnij klatkę piersiową wprost do drążka, a łokcie kieruj intencjonalnie w stronę swoich bioder.</li>
+                        <li>Kontroluj fazę opuszczania ciała (faza negatywna) aż do uzyskania pełnego zwisu na drążku.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Wymachiwanie nogami i szarpanie biodrami (tzw. kipping) zamiast używania czystej siły mięśni grzbietu.</li>
+                        <li>Wysuwanie barków mocno do przodu oraz zamykanie klatki piersiowej w końcowej fazie ruchu.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="narciarz.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Narciarz</h3>
+                <p>Izolowane prostowanie ramion na wyciągu górnym, skupiające pracę na mięśniu najszerszym grzbietu.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Lekko ugnij kolana i pochyl prosty, stabilny tułów w przód pod kątem około 45 stopni.</li>
+                        <li>Ściągaj drążek lub linę do swoich bioder na lekko ugiętych, ale sztywno zablokowanych w łokciach rękach.</li>
+                        <li>W końcowej fazie ruchu mocno ściągnij łopatki do siebie i wyeksponuj klatkę piersiową w przód.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Uginanie i prostowanie rąk w łokciach podczas ruchu (wtedy zamiast pleców zaczyna pracować triceps).</li>
+                        <li>Pomaganie sobie pędem całego ciała poprzez ciągłe bujanie tułowia w przód i w tył.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Lat-Pulldown.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Lat's pulldown z wyciągu górnego</h3>
+                <p>Znakomita alternatywa dla podciągania, pozwalająca idealnie kontrolować obciążenie pleców.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Ściągaj drążek w kierunku górnej części klatki piersiowej, odchylając tułów minimalnie w tył.</li>
+                        <li>Prowadź łokcie blisko boków ciała, kierując je w dół oraz delikatnie do środka.</li>
+                        <li>W pełni rozciągaj mięśnie pleców podczas kontrolowanego powrotu ciężaru w górę.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Przyciąganie drążka za kark, co jest skrajnie niebezpieczne dla stożka rotatorów i stawów barkowych.</li>
+                        <li>Szarpanie ciężaru za pomocą gwałtownego i mocnego rzucania całego tułowia w tył.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Seated-Cable-Row.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Wiosłowanie z wyciągu dolnego</h3>
+                <p>Ruch poziomy budujący grubość pleców oraz siłę mięśni czworobocznych i równoległobocznych.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Siedząc prosto z lekko ugiętymi kolanami, przyciągaj uchwyt w kierunku dolnej części brzucha.</li>
+                        <li>Ruch rozpoczynaj zawsze od mocnego ściągnięcia łopatek do środka i w dół (retrakcja).</li>
+                        <li>Utrzymuj przedramiona w jednej, równej linii z działaniem linki wyciągu dolnego.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Garbienie się w fazie rozciągnięcia i nadmierne prostowanie tułowia w tył przy przyciąganiu ciężaru.</li>
+                        <li>Unoszenie barków wysoko w stronę uszu, co przeciąża mięsień dźwigacz łopatki.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Bent-Over-Dumbbell-Row.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Focze wiosłowanie</h3>
+                <p>Wiosłowanie leżąc na podwyższonej ławce. Całkowicie eliminuje pracę dolnego odcinka pleców, izolując górę grzbietu.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Połóż się brzuchem płasko na ławce, stopy oparte stabilnie na ziemi lub specjalnych podestach.</li>
+                        <li>Przyciągaj sztangę lub hantle pionowo w górę, aż dotkniesz dolną krawędzią ławki.</li>
+                        <li>Skup się na maksymalnej pracy łopatek i prowadzeniu łokci wysoko w stronę sufitu.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Orywanie klatki piersiowej od ławki w celu ułatwienia sobie podniesienia dużego ciężaru.</li>
+                        <li>Wykonywanie niepełnego zakresu ruchu, czyli brak wyraźnego dotknięcia gryfem do spodu ławki.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Dumbbell-Row.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Wiosłowanie jednorącz w opadzie</h3>
+                <p>Ćwiczenie jednostronne (unilateralne), pozwalające wyrównać asymetrię siły pleców.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Oprzyj jedno kolano i dłoń stabilnie na ławce poziomej, kręgosłup ustawiając równolegle do ziemi.</li>
+                        <li>Przyciągaj hantel po lekkim łuku w kierunku swojego biodra, trzymając łokieć blisko tułowia.</li>
+                        <li>Opuszczaj ciężar powoli i kontrolowanie, czując głębokie rozciąganie mięśnia najszerszego grzbietu.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Rotowanie i mocne skręcanie tułowia w bok w celu "podrzucenia" zbyt ciężkiego hantla.</li>
+                        <li>Zaczynanie i prowadzenie ruchu z mocno zgarbionego, zaokrąglonego odcinka lędźwiowego.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="part-divider">Klatka Piersiowa</div>
+        
+        <div class="exercise-item">
+            <div class="video-container"><img src="Dumbbell-Press.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Wyciskanie hantli na ławce</h3>
+                <p>Podstawowe ćwiczenie budujące masę klatki, dające większy zakres ruchu niż tradycyjna sztanga.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Ściągnij łopatki w dół i do środka, dociskając je niezmiennie do ławki przez cały czas wyciskania.</li>
+                        <li>Prowadź przedramiona pionowo pod hantlami, łokcie trzymając pod kątem ok. 45-60 stopni do ciała.</li>
+                        <li>Opuszczaj hantle głęboko do poziomu klatki i wyciskaj je w górę po trajektorii lekkiego łuku.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Zbyt szerokie prowadzenie łokci (pod kątem 90 stopni), co wywołuje bolesne przeciążenie barków.</li>
+                        <li>Wysuwanie barków w przód i odrywanie łopatek od oparcia ławki w końcowej fazie ruchu na górze.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Barbell-JM-Press.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Wyciskanie w wąskim chwycie</h3>
+                <p>Wersja wyciskania kładąca większy nacisk na triceps oraz wewnętrzną część klatki piersiowej.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Chwyć sztangę dokładnie na szerokość swoich barków, dbając o sztywne, proste nadgarstki.</li>
+                        <li>Opuszczaj gryf pod pełną kontrolą do dolnej części klatki, prowadząc łokcie blisko żeber.</li>
+                        <li>Wyciskaj dynamicznie w górę, pamiętając o ciągłym utrzymaniu stabilnie ściągniętych łopatek.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Chwytanie sztangi zbyt wąsko (np. gdy dłonie się stykają) – wywołuje to bardzo silny ból w nadgarstkach.</li>
+                        <li>Odbijanie sztangi z impetem od klatki piersiowej zamiast kontrolowanego nawrotu ruchu.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Pec-Deck-Fly.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Rozpiętki na butterfly</h3>
+                <p>Izolowany ruch maszynowy pozwalający uzyskać maksymalne napięcie klatki w fazie końcowego skurczu.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Ustaw wysokość siedziska tak, aby dłonie i łokcie znajdowały się na linii środka klatki piersiowej.</li>
+                        <li>Prowadź ramiona szeroko w tył, utrzymując lekkie, stałe i niezmienne ugięcie w stawach łokciowych.</li>
+                        <li>W końcowej fazie złącz dłonie przed sobą i maksymalnie zepnij klatkę piersiową na pełną sekundę.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Prostowanie rąk w łokciach na siłę lub ich nadmierne uginanie (zamiana ruchu rozpiętek w wyciskanie).</li>
+                        <li>Wysuwanie głowy oraz barków mocno do przodu podczas próby złączenia uchwytów maszyny.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="part-divider">Barki</div>
+        
+        <div class="exercise-item">
+            <div class="video-container"><img src="Barbell-Standing-Military-Press.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>OHP</h3>
+                <p>Wyciskanie żołnierskie stojąc. Angażuje głównie przedni akton barku, triceps oraz pełną stabilizację core.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Napnij maksymalnie mocno pośladki, brzuch oraz uda jeszcze przed oderwaniem ciężaru.</li>
+                        <li>Wyciskaj sztangę nad głowę pionowo, cofając lekko głowę, a po przejściu gryfu wsuwając ją w przód.</li>
+                        <li>Utrzymuj przedramiona idealnie pionowo pod sztangą w dolnej pozycji startowej.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Odchylanie całego tułowia mocno w tył, co drastycznie przeciąża odcinek lędźwiowy kręgosłupa.</li>
+                        <li>Pomaganie sobie poprzez uginanie i prostowanie nóg w kolanach (chyba że wykonujesz Push Press).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Dumbbell-Shoulder-Press.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Wyciskanie hantli siedząc</h3>
+                <p>Wygodniejsza i znacznie bardziej stabilna forma budowania siły oraz masy obręczy barkowej.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Ustaw oparcie ławki na około 85 stopni – lekkie odchylenie odciąża stawy barkowe.</li>
+                        <li>Prowadź łokcie delikatnie zbieżnie do przodu (w płaszczyźnie łopatki), a nie sztywno i szeroko w bok.</li>
+                        <li>Wyciskaj hantle wysoko nad głowę, kontrolując, by ramiona nie uciekały z prawidłowej linii ruchu.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Zsuwanie pośladków do przodu po siedzisku, co wywołuje bolesny łuk w dolnych plecach.</li>
+                        <li>Zderzanie hantli ze sobą na górze oraz nadmierne skracanie zakresu ruchu (schodzenie tylko do uszu).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Kneeling-Landmine-Press.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Landmine Press</h3>
+                <p>Wyciskanie półsztangi pod kątem stojąc. Wyjątkowo przyjazne dla osób z ograniczeniami ruchomości nad głową.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Stań stabilnie w lekkim rozroku, trzymając koniec gryfu w jednej dłoni na wysokości klatki piersiowej.</li>
+                        <li>Wyciskaj sztangę w górę i lekko w przód, na samym końcu wykonując delikatny opad tułowia za ciężarem.</li>
+                        <li>Kontroluj każdą fazę powrotu ciężaru w dół, dbając o ciągłe trzymanie mocno spiętego brzucha.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Skręcanie bioder i rotowanie całego tułowia w bok w trakcie wyciskania ciężaru jednorącz.</li>
+                        <li>Przeprosty w stawach kolanowych oraz brak stabilnego oparcia stóp na podłożu.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Arnold-Press.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Arnold Press</h3>
+                <p>Odmiana wyciskania nad głowę z rotacją nadgarstków, mocniej angażująca przedni i boczny akton barku.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Pozycja startowa: hantle na wysokości klatki przed Tobą, dłonie skierowane palcami do wewnątrz (do siebie).</li>
+                        <li>Podczas wyciskania płynnie rotuj dłonie o 180 stopni, tak by na samej górze palce były skierowane w przód.</li>
+                        <li>Połącz ruch rotacji z wyciskaniem w jeden, płynny i w pełni skoordynowany ruch ramion.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Rozdzielanie ćwiczenia na dwa osobne ruchy (czyli najpierw rotacja przed klatką, a dopiero potem wyciskanie).</li>
+                        <li>Gubienie kontroli nad hantlami i uderzanie nimi o siebie w najwyższym punkcie nad głową.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="dumbbell-cuban-press-.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Cuban Press</h3>
+                <p>Złożone ćwiczenie wzmacniające stożek rotatorów, tylny akton barku i mięsień czworoboczny.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Unieś hantle wzdłuż tułowia do wysokości klatki (szerokie łokcie), wykonaj rotację zewnętrzną w barkach (hantle w górę), a na koniec wyciśnij je nad głowę.</li>
+                        <li>Używaj bardzo małego, symbolicznego ciężaru – liczy się perfekcyjna praca małych mięśni rotatorów.</li>
+                        <li>Wracaj dokładnie tą samą ścieżką ruchową, powoli kontrolując każdy z trzech etapów ćwiczenia.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Używanie zbyt dużego, ambicjonalnego ciężaru, co niesie ogromne ryzyko bolesnej kontuzji barku.</li>
+                        <li>Zbytnie spieszenie się, szarpanie i brak pełnej kontroli nad pozycją w fazie rotowania hantli.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Face-Pull.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Face pull</h3>
+                <p>Jedno z najlepszych ćwiczeń na zdrowie łopatek, tył barku oraz mięśnie rotatorów.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Ciągnij linę wyciągu górnego w kierunku swojej twarzy (na wysokości linii oczu lub uszu).</li>
+                        <li>Kluczowe: Rozrywaj linę na boki na końcu ruchu, tak by dłonie znalazły się wyraźnie z tyłu za łokciami.</li>
+                        <li>Trzymaj klatkę piersiową dumnie uniesioną, a brzuch stale napięty w celu stabilizacji postawy.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Wysuwanie głowy mocno do przodu w stronę liny (tzw. żuraw) zamiast przyciągania liny do stabilnej twarzy.</li>
+                        <li>Prowadzenie dłoni poniżej linii łokci na końcu ruchu, co całkowicie kasuje rotację zewnętrzną.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="reverse-butterfly.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Reverse butterfly</h3>
+                <p>Odwrotne rozpiętki na maszynie skupiające pracę na tylnym aktonie mięśnia naramiennego.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Usiądź przodem do maszyny, klatka piersiowa musi być mocno dociskana do poduszki oparcia.</li>
+                        <li>Odwodź ramiona daleko w tył, utrzymując ręce prawie proste (zabezpieczone mikrozgięciem w łokciu).</li>
+                        <li>Skup się na ruchu samego ramienia w tył, starając się kontrolować łopatki i izolować tył barku.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Orywanie klatki piersiowej od poduszki i pomaganie sobie pędem ciała poprzez odrzucanie tułowia.</li>
+                        <li>Unoszenie barków wysoko w górę, co przenosi całą pracę na napięte mięśnie czworoboczne (kaptury).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="one-arm-Cable-Lateral-Raise.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Wznosy z wyciągu dolnego</h3>
+                <p>Ruch na boczny akton barku z wyciągu, zapewniający idealne, stałe napięcie mięśniowe przez cały czas.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Stań bokiem blisko wyciągu, linkę prowadząc bezpiecznie za swoimi plecami lub z przodu ciała.</li>
+                        <li>Unieś ramię w bok dokładnie do wysokości barku, kierując dłoń delikatnie w przód (w płaszczyźnie łopatki).</li>
+                        <li>Opuszczaj ramię powoli, stawiając aktywny opór sile naciągu linki wyciągu.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Mocne przechylanie tułowia w przeciwny bok, aby bezwładnie szarpnąć linkę z dołu.</li>
+                        <li>Unoszenie ręki znacznie powyżej linii barku bez pełnej kontroli nad strukturą stawu.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Seated-Dumbbell-Lateral-Raise.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Wznosy hantlami</h3>
+                <p>Klasyczne ćwiczenie budujące pożądaną szerokość barków (boczny akton mięśnia naramiennego).</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Pochyl tułów minimalnie w przód (około 5-10 stopni) i zachowaj stabilną pozycję nóg.</li>
+                        <li>Unieś hantle w bok i lekko w przód (pod kątem ok. 30 stopni od linii bocznej ciała – płaszczyzna łopatki).</li>
+                        <li>Kończ ruch, gdy hantle osiągną wysokość barków, trzymając mały palec dłoni minimalnie wyżej niż kciuk.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Dynamiczne bujanie tułowiem i używanie pędu całego ciała w celu wyrzucenia hantli w górę.</li>
+                        <li>Unoszenie hantli z kciukami skierowanymi pionowo w sufit, co drastycznie zmniejsza izolację bocznego aktonu.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="part-divider">Ramiona (Biceps i Triceps)</div>
+        
+        <div class="exercise-item">
+            <div class="video-container"><img src="Hammer-Curl.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Uginanie łokci z hantlami</h3>
+                <p>Podstawowe ćwiczenie na biceps, łączące zgięcie łokcia z odwracaniem nadgarstka (supinacją) w trakcie ruchu.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Zacznij od chwytu neutralnego (młotkowego). Od połowy ruchu mocno przekręć dłoń małym palcem do góry.</li>
+                        <li>Trzymaj łokcie stabilnie zablokowane blisko boków tułowia, nie pozwalając im na ruch w przód.</li>
+                        <li>Wykonuj pełny, kontrolowany wyprost ramienia na samym dole, aby całkowicie rozciągnąć biceps.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Wysuwanie łokci mocno do przodu (wtedy lwią część pracy niepotrzebnie przejmuje przedni akton barku).</li>
+                        <li>Wyraźne bujanie tułowiem oraz odchylanie pleców w tył podczas unoszenia hantli.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Hammer-Curl.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Uginanie łokci hammers</h3>
+                <p>Ruch budujący grubość ramienia, kładący duży nacisk na mięsień ramienno-promieniowy oraz ramienny.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Trzymaj hantle sztywnym chwytem neutralnym (kciuki skierowane w górę) przez cały zakres ruchu.</li>
+                        <li>Unieś ciężar płynnie, mocno dopinając przedramię oraz mięsień ramienny w szczytowym punkcie.</li>
+                        <li>Stopy rozstaw stabilnie na szerokość bioder, a brzuch trzymaj mocno napięty.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Pomaganie sobie pędem barków oraz całkowite skracanie lub puszczanie fazy opuszczania hantli.</li>
+                        <li>Wyginanie i wiotczenie nadgarstków w dół lub w górę – nadgarstek musi tworzyć sztywną linię z przedramieniem.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="One-arm-triceps-pushdown.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Prostowanie łokci na lince</h3>
+                <p>Ćwiczenie izolowane na triceps, ze szczególnym i mocnym uwzględnieniem jego głowy bocznej.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Zablokuj łokcie blisko żeber i nie zmieniaj ich położenia o milimetr podczas całego ruchu.</li>
+                        <li>Prostuj ręce w dół, a na samym dole rozszerz końcówki liny mocno na boki, maksymalnie dopinając triceps.</li>
+                        <li>Wracaj w górę powoli, kończąc ruch kontrolowanie na wysokości klatki piersiowej (kąt 90 stopni w łokciu).</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Pozwalanie, by łokcie unosiły się bezwładnie w górę i uderzały o ciało podczas powrotu liny.</li>
+                        <li>Garbienie się nad linką i napieranie na nią ciężarem całego klatki piersiowej zamiast czystej pracy rąk.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="californiapress.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>California press</h3>
+                <p>Doskonałe połączenie wyciskania wąskiego i wyciskania francuskiego. Genialne ćwiczenie budujące tricepsy.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Opuszczaj sztangę po skosie w kierunku szyi lub brody, uginając mocno łokcie (faza wyciskania francuskiego).</li>
+                        <li>Gdy gryf znajdzie się tuż przy ciele, wyciśnij sztangę pionowo w górę siłą tricepsów (faza wyciskania wąsko).</li>
+                        <li>Utrzymuj absolutną i stałą kontrolę nad ciężarem przez cały czas trwania fazy opuszczania.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Zrzucanie sztangi prosto w kierunku szyi bez żadnej asekuracji i kontroli napięcia mięśniowego.</li>
+                        <li>Rozjeżdżanie się łokci zbyt szeroko na boki w trakcie opuszczania gryfu.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="french_press_bodybuilding-mit_kurzhanteln.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Wyciskanie francuskie</h3>
+                <p>Klasyczny i potężny budowniczy siły oraz masy tricepsa, mocno angażujący jego głowę długą.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Leżąc na ławce, unieś sztangę łamaną i odchyl ramiona lekko w tył za głowę (ok. 15 stopni) dla stałego napięcia.</li>
+                        <li>Uginaj wyłącznie przedramiona, opuszczając sztangę precyzyjnie w stronę czubka głowy lub tuż za nią.</li>
+                        <li>Łokcie trzymaj wąsko, idealnie równolegle do siebie przez cały czas trwania ruchu.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Rozszerzanie łokci szeroko na boki (zamienia to ruch francuski w zwykłe wyciskanie klatką).</li>
+                        <li>Wymachiwanie ramionami w przód i w tył zamiast zachowania pełnej izolacji w stawie łokciowym.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEKCJA DOLNA KOŃCZYNA -->
+    <section id="dolna" class="exercise-page">
+        <div class="back-btn" onclick="showHome()">← Powrót do menu</div>
+        <div class="section-header"><h2>Dolna kończyna</h2></div>
+
+        <div class="part-divider">Przykłady i Dominacja Czworogłowych</div>
+        
+        <div class="exercise-item">
+            <div class="video-container"><img src="BARBELL-SQUAT.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Przysiad ze sztangą na plecach</h3>
+                <p>Główne, fundamentalne ćwiczenie wielostawowe rozwijające siłę nóg, pośladków oraz korpusu.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Ustaw stopy stabilnie na szerokość barków, rotując palce delikatnie na zewnątrz.</li>
+                        <li>Zaczynaj ruch od jednoczesnego zgięcia w biodrach i kolanach, prowadząc kolana ściśle w linii stóp.</li>
+                        <li>Schodź do głębokości poniżej linii równoległej uda z ziemią, trzymając idealnie proste plecy.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Schodzenie się kolan do środka (tzw. koślawienie kolan) podczas wstawania z ciężarem.</li>
+                        <li>Orywanie pięt od podłoża oraz gwałtowne podwijanie miednicy pod siebie w dole (butt wink).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="front-squat.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Front squat</h3>
+                <p>Wersja przysiadu ze sztangą z przodu, kładąca olbrzymi nacisk na czworogłowe uda oraz mięśnie brzucha.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Trzymaj sztangę stabilnie na przednim aktonie barków, unosząc łokcie wysoko w górę (równolegle do ziemi).</li>
+                        <li>Utrzymuj tułów maksymalnie pionowo podczas całego zejścia w dół i powrotu.</li>
+                        <li>Rozpychaj kolana mocno na boki, aktywując pośladki do stabilizacji ruchu.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Opadanie łokci w dół w trakcie przysiadu, co powoduje zsuwanie się sztangi i niebezpieczne zgarbienie pleców.</li>
+                        <li>Przenoszenie środka ciężkości ciała do przodu na palce stóp i odrywanie tylnej części stopy.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Zercher-Squat.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Zercher Squat</h3>
+                <p>Niezwykle wymagający przysiad ze sztangą trzymaną w zgięciach łokci. Potężnie obciąża core i czworogłowe.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Zablokuj gryf mocno w zgięciach łokci, łącząc dłonie blisko swojej klatki piersiowej.</li>
+                        <li>Wykonaj przysiad głęboko, pilnując, by łokcie przechodziły swobodnie po wewnętrznej stronie kolan.</li>
+                        <li>Utrzymuj twardy brzuch i maksymalnie proste plecy mimo siły ciągnącej ciężar w przód.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Pozwalanie, by ciężar sztangi pociągnął barki oraz górę pleców w dół (garbienie odcinka piersiowego).</li>
+                        <li>Rozluźnienie uścisku rąk lub siadanie na piętach bez kontroli napięcia korpusu.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Dumbbell-Goblet-Squat.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Goblet Squat</h3>
+                <p>Idealne ćwiczenie do nauki prawidłowego wzorca przysiadu oraz świetne narzędzie hipertroficzne.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Trzymaj hantel lub kettlebell pionowo, oburącz tuż przy samej klatce piersiowej.</li>
+                        <li>Schodź nisko i płynnie, celując łokciami w wewnętrzną stronę swoich kolan.</li>
+                        <li>Przez cały czas trwania ćwiczenia trzymaj całe stopy twardo przyklejone do podłoża.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Odsuwanie trzymanego ciężaru od klatki piersiowej, co generuje szkodliwe dźwignie na kręgosłup.</li>
+                        <li>Zwijanie miednicy głęboko pod siebie (butt wink) w najniższej fazie przysiadu.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="box.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Box Squat</h3>
+                <p>Przysiad z kontrolowanym zatrzymaniem na podwyższeniu, idealny do budowania czystej siły bioder.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Cofnij biodra mocniej w tył niż w klasycznym przysiadzie, kontrolowanie siadając na skrzyni lub ławce.</li>
+                        <li>Usiądź, zatrzymaj ruch na pełną sekundę, zachowując 100% napięcia mięśniowego w brzuchu i plecach.</li>
+                        <li>Wstań bardzo dynamicznie, pchając biodra mocno w przód i dociskając pięty do ziemi.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Odbijanie się (kołysanie i rozpędzanie ciała) od powierzchni skrzyni w celu łatwiejszego wstania.</li>
+                        <li>Całkowite rozluźnienie mięśni core i bezwładne "klapnięcie" na podwyższenie.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="dumbbell-cossack-squat.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Cossack squat</h3>
+                <p>Przysiad boczny genialnie rozwijający siłę jednonóż oraz elastyczność i mobilność przywodzicieli.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Stań w szerokim rozroku, po czym przenieś ciężar ciała na jedną nogę, robiąc na niej głęboki przysiad.</li>
+                        <li>Noga przeciwna pozostaje idealnie prosta, z palcami zadartymi w stronę sufitu (oparcie na samej pięcie).</li>
+                        <li>Utrzymuj piętę nogi przysiadającej całkowicie płasko na podłożu przez cały ruch.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Odrywanie pięty nogi pracującej (zginanej) od ziemi, co przeciąża staw kolanowy.</li>
+                        <li>Mocne zaokrąglanie pleców i opadanie klatki piersiowej bezwładnie w dół ku podłodze.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Nordic-Hamstring-Curl.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Reverse nordic curl</h3>
+                <p>Ćwiczenie ekscentryczne na mięśnie czworogłowe ud, budujące odporność ścięgien na urazy i kontuzje.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Klęcząc na macie, zablokuj biodra w pełnym wyproście (napnij mocno pośladki oraz brzuch).</li>
+                        <li>Odchylaj całe proste, usztywnione ciało od linii kolan w tył tak daleko, jak jesteś w stanie kontrolować.</li>
+                        <li>Wracaj do pionu, ciągnąc siłą przodu ud, bez jakiegokolwiek łamania pozycji w biodrach.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Zginanie się w biodrach (siadanie na piętach) podczas próby wykonania ruchu w tył.</li>
+                        <li>Hiperlordoza lędźwiowa (wygięcie pleców w łuk) spowodowana brakiem napięcia brzucha.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="part-divider">Jednonóż</div>
+        
+        <div class="exercise-item">
+            <div class="video-container"><img src="Dumbbell-Bulgarian-Split-Squat.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Bulgarian split squat</h3>
+                <p>Znakomity budowniczy masy i siły nóg, eliminujący ograniczenia wytrzymałości prostowników grzbietu.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Oprzyj jedną stopę stabilnie z tyłu na podwyższeniu (np. ławce treningowej lub skrzyni).</li>
+                        <li>Schodź nisko pionowo lub z lekkim pochyleniem w przód (zależnie od celu: pośladki czy czwórki).</li>
+                        <li>Kolano nogi z przodu musi być maksymalnie stabilne i iść idealnie w linii stopy.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Zbyt bliski lub za daleki rozstaw stóp, który uniemożliwia stabilny i pełny ruch w stawie.</li>
+                        <li>Koślawienie kolana pracującego (uciekanie do wewnątrz) podczas dynamicznego wstawania.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="zakroki.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Zakroki</h3>
+                <p>Bezpieczniejsza dla stawów kolanowych dynamiczna wersja wykroków, mocno angażująca taśmę tylną.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Zrób płynny, kontrolowany krok w tył, obniżając biodra, aż tylne kolano znajdzie się tuż nad ziemią.</li>
+                        <li>Ciężar ciała spoczywa na nodze z przodu (pięta przedniej stopy musi być mocno wbita w ziemię).</li>
+                        <li>Wstań dynamicznie, odpychając się zdecydowanie z przedniej nogi z powrotem do pionu.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Uderzanie tylnym kolanem z impetem o podłogę, co grozi bolesnym stłuczeniem.</li>
+                        <li>Przenoszenie większości ciężaru ciała na nogę zakroczną (znajdującą się z tyłu).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="wykroki.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Wykroki</h3>
+                <p>Dynamiczny ruch w przód świetnie rozwijający siłę funkcjonalną oraz stabilizację miednicy.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Zrób pewny krok w przód i płynnie zamortyzuj ruch, schodząc biodrami prosto w dół.</li>
+                        <li>Utrzymuj stabilny korpus i nie pozwól, by kolano przednie uciekało na boki lub do środka.</li>
+                        <li>Odepchnij się mocno ze stopy przedniej, by wrócić stabilnie do pozycji stojącej.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Chwianie się i brak stabilizacji miednicy poprzez stawianie stóp w jednej, wąskiej linii (jak na linie).</li>
+                        <li>Gwałtowne pochylanie całego tułowia i klatki piersiowej na udo przednie w dole ruchu.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="stepup.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Step up</h3>
+                <p>Ćwiczenie jednostronne wzorowo imitujące naturalny ruch wchodzenia pod górę ze zwiększonym oporem.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Postaw całą stopę na skrzyni lub ławce. Pięta pod żadnym pozorem nie może wisieć w powietrzu.</li>
+                        <li>Wchodź w górę, używając wyłącznie i świadomie siły nogi postawionej na podwyższeniu.</li>
+                        <li>Opuszczaj się powoli i ekscentrycznie, dbając o pełną kontrolę ruchu do samego dołu.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Odbijanie się z palców nogi stojącej na ziemi (drastycznie zmniejsza to pracę nogi docelowej).</li>
+                        <li>Bezwładne spadanie w dół bez żadnej kontroli mięśniowej podczas fazy powrotu na podłogę.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="part-divider">Biodro i Pośladki</div>
+        
+        <div class="exercise-item">
+            <div class="video-container"><img src="Barbell-Hip-Thrust.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Hip thrust</h3>
+                <p>Najlepsze, dedykowane ćwiczenie na maksymalny rozwój, siłę oraz pełną hipertrofię mięśni pośladkowych.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Oprzyj dolną linię łopatek o stabilną ławkę, sztanga spoczywa centralnie na Twoich biodrach.</li>
+                        <li>Wypychaj biodra w górę przez nacisk z pięt, uzyskując pełny, mocny wyprost w biodrze.</li>
+                        <li>Kluczowe: Patrz stale przed siebie (broda blisko klatki), wymuszając prawidłowe podwinięcie miednicy.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Zadzieranie głowy w tył i wyginanie odcinka lędźwiowego w bolesny łuk na samej górze.</li>
+                        <li>Złe ustawienie stóp (kąt pod kolanem w najwyższym punkcie powinien wynosić dokładnie ok. 90 stopni).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Glute-Bridge-.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Glute bridge</h3>
+                <p>Podstawowa wersja mostka biodrowego na ziemi, doskonała do nauki prawidłowej aktywacji pośladka.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Leżąc płasko na plecach, dociśnij stopy do podłoża na szerokość bioder blisko pośladków.</li>
+                        <li>Unieś biodra mocno napinając pośladki, podczas gdy brzuch pozostaje twardy i spięty.</li>
+                        <li>Zatrzymaj ruch na szczycie na sekundę i powoli opuść biodra tuż nad samą matę.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Wypychanie klatki piersiowej i brzucha za wysoko, co generuje ucisk i ból w lędźwiach.</li>
+                        <li>Brak pełnego, świadomego dopięcia mięśni pośladkowych w końcowej fazie uniesienia.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Single-Leg-Bridge.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>One leg Glute bridge</h3>
+                <p>Trudniejsza wersja mostka eliminująca dysbalans siły oraz stabilności pomiędzy lewym a prawym pośladkiem.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Jedną nogę unieś prosto lub ugnij w powietrzu, druga stopa spoczywa stabilnie płasko na ziemi.</li>
+                        <li>Wypychaj biodra wysoko w górę, pracując wyłącznie nogą wspierającą i wbijając piętę w podłogę.</li>
+                        <li>Dbaj o to, by oba kolce biodrowe unosiły się równo – miednica nie może przechylać się na boki.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Rotowanie i opadanie miednicy w jedną stronę podczas unoszenia bioder nad podłogę.</li>
+                        <li>Pomaganie sobie poprzez bardzo mocne odpychanie się ramionami i łokciami od maty.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Cable-Donkey-Kickback.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Kickback</h3>
+                <p>Izolowane ćwiczenie na ukształtowanie górnej oraz wielkiej części mięśnia pośladkowego.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Pochyl lekko prosty tułów w przód, chwyć stabilnie konstrukcję wyciągu dolnego dla pełnej podpory.</li>
+                        <li>Odwodź nogę w tył za pomocą pracy pośladka, lekko rotując stopę na zewnątrz w końcowej fazie.</li>
+                        <li>Ruch powrotny (negatywny) wykonuj powoli, stawiając czynny opór ciężarowi wyciągu.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Pogłębianie lordozy lędźwiowej (bujanie w lędźwiach) przy każdym machnięciu nogą w tył.</li>
+                        <li>Zbyt dynamiczne szarpanie linki i rzucanie tułowia w przód zamiast stabilnej pracy biodra.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="part-divider">Taśma Tylna (Martwe Ciągi)</div>
+        
+        <div class="exercise-item">
+            <div class="video-container"><img src="Barbell-Deadlift.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Martwy ciąg</h3>
+                <p>Globalne ćwiczenie siłowe angażujące niemal każdy mięsień ciała, ze szczególnym naciskiem na taśmę tylną.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Sztanga nad środkiem stóp, piszczele blisko gryfu. Plecy idealnie proste, łopatki centralnie nad sztangą.</li>
+                        <li>Ruch zaczynaj mocnym odepchnięciem nóg od podłogi, sztangę prowadząc jak najbliżej swoich nóg.</li>
+                        <li>Kończ ruch w pełnym wyproście całej sylwetki, dopinając mocno pośladki i stabilizując brzuch.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Robienie tzw. kociego grzbietu (zaokrąglanie pleców w odcinku lędźwiowym) – skrajnie niebezpieczne dla dysków.</li>
+                        <li>Odchylanie się za mocno w tył na samej górze (przeprost) oraz bezwładne odbijanie sztangi od ziemi.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Dumbbell-Romanian-Deadlift.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>RDL</h3>
+                <p>Ruch zawiasowy biodra (hip hinge) maksymalnie izolujący mięśnie dwugłowe ud oraz pośladki.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Zaczynaj od pozycji stojącej. Kolana lekko odblokowane (ugięte ok. 10 stopni i całkowicie zamrożone).</li>
+                        <li>Popychaj biodra daleko w tył, przesuwając sztangę lub hantle tuż przy udach w dół, aż poczujesz rozciąganie z tyłu nóg.</li>
+                        <li>Wracaj w górę płynnie wypychając biodra w przód za pomocą mocnego skurczu pośladków.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Pogłębianie ugięcia kolan w trakcie opuszczania ciężaru (zamienia to martwy ciąg w zwykły przysiad).</li>
+                        <li>Odsuwanie sztangi od nóg daleko do przodu oraz całkowite odpuszczanie napięcia w łopatkach.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Barbell-Sumo-Deadlift.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Sumo deadlift</h3>
+                <p>Wersja ciągu w bardzo szerokim rozroku stóp. Angażuje mocniej czworogłowe ud oraz przywodziciele, mocno odciążając plecy.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Stań w bardzo szerokim rozroku, palce stóp skierowane pod kątem wyraźnie na zewnątrz.</li>
+                        <li>Podjedź biodrami maksymalnie blisko sztangi, utrzymując klatkę mocno uniesioną i pionowy tułów.</li>
+                        <li>Pchaj stopy mocno na boki, jakbyś chciał "rozerwać podłogę", i unoś ciężar płynnie pionowo w górę.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Zbytnie oddalenie bioder od sztangi przed startem, co zamienia pozycję w ciąg klasyczny na szerokich nogach.</li>
+                        <li>Niestabilność stóp na podłożu oraz bolesne przetaczanie się na zewnętrzne krawędzie buta.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-item">
+            <div class="video-container"><img src="Nordic-Hamstring-Curl.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Wznosy na ławce Rzymskiej</h3>
+                <p>Bezpieczny wyprost tułowia rozwijający prostowniki grzbietu, pośladki oraz mięśnie dwugłowe ud.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Ustaw poduszkę maszyny tuż poniżej linii kolców biodrowych, aby umożliwić swobodne zgięcie w biodrze.</li>
+                        <li>Opuszczaj tułów z całkowicie prostymi plecami, a unieś ciało tylko do linii idealnie prostej z nogami.</li>
+                        <li>W najwyższej fazie ruchu zatrzymaj ciało i mocno zepnij pośladki, stabilizując pozycję.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Nadmierne wyginanie ciała w łuk na samej górze (niebezpieczny przeprost kręgosłupa).</li>
+                        <li>Wykonywanie ruchu w sposób bardzo szybki, szarpany i rzucanie tułowia bez kontroli napięcia.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="part-divider">Łydki</div>
+        
+        <div class="exercise-item">
+            <div class="video-container"><img src="Dumbbell-Calf-Raise.gif" alt=""></div>
+            <div class="exercise-info">
+                <h3>Wspięcia na palce</h3>
+                <p>Ćwiczenie na rozwój mięśnia brzuchatego (wersja stojąc) lub płaszczkowatego (wersja siedząc) łydki.</p>
+                <div class="technique-section">
+                    <div class="technique-title correct">Prawidłowe wykonanie:</div>
+                    <ul class="technique-list correct">
+                        <li>Wykonuj ruch stojąc na podwyższeniu (np. stepie), aby uzyskać pełne, głębokie rozciągnięcie łydki na dole.</li>
+                        <li>Unieś się maksymalnie wysoko na palce stóp i przytrzymaj pełny skurcz mięśnia na całą sekundę.</li>
+                        <li>W dolnej fazie zatrzymaj ruch na chwilę, aby zniwelować sprężystą pracę ścięgna Achillesa.</li>
+                    </ul>
+                    <div class="technique-title wrong">Czego unikać (błędy):</div>
+                    <ul class="technique-list wrong">
+                        <li>Zbyt szybkie, bezmyślne sprężynowanie i skakanie bez żadnej kontroli fazy rozciągnięcia mięśnia.</li>
+                        <li>Niski, skrócony i niepełny zakres ruchu w stawie skokowym uniemożliwiający właściwą stymulację.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer><p>© 2026 SIUDY | EXERCISE HUB</p></footer>
+
+    <script>
+        function openPage(pageId) {
+            document.getElementById('home-content').style.display = 'none';
+            const pages = document.querySelectorAll('.exercise-page');
+            pages.forEach(p => p.style.display = 'none');
+            const target = document.getElementById(pageId);
+            target.style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+        function showHome() {
+            const pages = document.querySelectorAll('.exercise-page');
+            pages.forEach(p => p.style.display = 'none');
+            document.getElementById('home-content').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
