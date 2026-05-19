@@ -120,92 +120,47 @@
             color: var(--bg-black); background-color: var(--accent-color);
             border-color: var(--accent-color); box-shadow: 0 0 15px var(--accent-glow);
         }
-     /* ==========================================
-           PEŁNA RESPONSYWNOŚĆ DLA SMARTFONÓW (RWD)
+      /* ==========================================
+           REGUŁY DLA TELEFONÓW (EKRANY DO 600px)
            ========================================== */
-        @media (max-width: 768px) {
-            /* 1. Naprawa ucinania i przykrywania ćwiczeń */
-            .exercise-item {
-                grid-template-columns: 1fr !important; /* Wymuszenie jednej kolumny */
-                gap: 20px;
-                overflow: hidden; /* Zapobiega wychodzeniu treści poza kartę */
-            }
-
-            /* 2. Sprawiamy, że filmiki YouTube dopasowują się do szerokości telefonu */
-            .video-container {
-                position: relative;
-                padding-bottom: 56.25%; /* Proporcje 16:9 */
-                height: 0;
-                overflow: hidden;
-                width: 100%;
-            }
-
-            .video-container iframe {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100% !important;
-                height: 100% !important;
-                border: 0;
-            }
-
-            /* 3. Pełna widoczność opisu i tekstu */
+        @media (max-width: 600px) {
+            /* 1. Zmniejszamy boczne odstępy kart, aby tekst miał max miejsca */
             .exercise-info {
-                padding: 20px 15px !important; /* Zmniejszamy gigantyczny margines boczny ze 60px na 15px */
-                width: 100%;
+                padding: 20px 15px; /* Dużo mniejszy padding na telefonie */
             }
 
-            /* Zmniejszenie nagłówków, aby nie wychodziły za ekran */
+            /* 2. Zmniejszamy gigantyczne nagłówki, żeby nie łamały się sztucznie */
             .section-header h2 {
-                font-size: 1.8rem;
+                font-size: 1.8rem; 
             }
 
             .exercise-info h3 {
                 font-size: 1.4rem;
             }
 
-            .technique-list {
-                padding-left: 20px; /* Aby kropki listy były ładnie widoczne */
-            }
-
-            /* 4. Poprawka nawigacji górnej - elementy nie nakładają się na siebie */
+            /* 3. Dopasowanie nawigacji, by przyciski nie zasłaniały tekstu */
             nav {
                 flex-direction: column;
-                gap: 12px;
-                padding: 15px 10px;
-                position: relative; /* Odczepiamy od góry na telefonie, żeby nic nie zasłaniało startu strony */
+                gap: 10px;
+                padding: 10px;
+                position: relative; /* Zapobiega przykrywaniu treści pod menu */
             }
-            
+
             nav div[style*="display: flex"] {
-                width: 100%;
                 justify-content: center;
                 flex-wrap: wrap;
                 gap: 8px !important;
             }
 
-            /* Ukrywamy mały napis w logo, by zyskać miejsce */
+            /* Ukrywamy mały dopisek w logo, by zyskać miejsce w poziomie */
             nav div[style*="border-left"] {
                 display: none !important;
             }
 
-            .nav-btn {
-                padding: 6px 12px;
-                font-size: 0.75rem;
-            }
-
-            /* 5. Dostosowanie sekcji głównej */
+            /* 4. Dopasowanie głównego baneru */
             .hero {
+                padding: 40px 15px;
                 height: auto;
-                padding: 50px 15px;
-            }
-
-            .categories-grid {
-                margin-top: 30px;
-                padding: 0 15px;
-            }
-
-            .exercise-page {
-                padding: 20px 10px;
             }
         }
     </style>
